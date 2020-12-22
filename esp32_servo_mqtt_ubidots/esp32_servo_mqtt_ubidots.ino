@@ -5,7 +5,6 @@
 #define PASSWORD "SSIDPASSWORD" // Put your wifi password here
 #define TOKEN "XXXX-xxxxxxxxxxxxxxxxxxxxxxxx" // Put your Ubidots' TOKEN
 #define MQTT_CLIENT_NAME "ESP32" // MQTT client Name, please enter your own 8-12 alphanumeric character ASCII string; 
-//it should be a random and unique ascii string and different from all other devices
 
 #define VARIABLE_LABEL "servo" // Assign the variable label
 #define DEVICE_LABEL "esp32" // Assign the device label
@@ -14,10 +13,8 @@ char mqttBroker[]  = "industrial.api.ubidots.com";
 char payload[100];
 char topic[150];
 
-#define LED_RELAY 2
-
 #include <Servo.h>
-#define SERVO_PIN 13
+#define SERVO_PIN 27
 
 Servo servo;
 
@@ -27,16 +24,21 @@ PubSubClient client(ubidots);
 long lastMsg = 0;
 
 void callback(char* topic, byte* payload, unsigned int length) {
+  char sub_payload[64];
+  int servoPos;
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
   for (int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
+    sub_payload[i] =  (char)payload[i];
   }
   Serial.println();
 
-  int val = payload[0];
-  servo.write(val);
+  sscanf((char*)sub_payload, "%i", &servoPos);
+  String buf = "Servo Pos set to = " + String(servoPos) + " °";
+  Serial.println(buf);
+  servo.write(servoPos);
   delay(15);
 }
 
@@ -60,7 +62,6 @@ void reconnect() {
 
 
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
   servo.attach(SERVO_PIN);
   Serial.begin(115200);
   WiFi.begin(WIFISSID, PASSWORD);

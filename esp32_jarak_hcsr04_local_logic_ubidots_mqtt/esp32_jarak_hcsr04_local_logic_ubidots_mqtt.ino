@@ -1,17 +1,47 @@
-// WIFI
+//WiFi
 #include <WiFi.h>
-#include <WiFiClient.h>
-int status = WL_IDLE_STATUS;     // the Wifi radio's status
-const char* ssid = "ssid";  // SSID Wifi / Hotspot
-const char* password = "986pswdr"; // Password Wifi / Hotspot
-WiFiClient client;
+int status = WL_IDLE_STATUS;
+const char* ssid     = "SSID";
+const char* password = "SSIDPASSWORD";
+String token = "XXXX-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+WiFiClient ubidots;
+
+//MQTT
+#include <PubSubClient.h>
+PubSubClient pubSubClient(ubidots);
+#define MQTT_CLIENT_NAME "esp32-client"
+char mqttBroker[]  = "industrial.api.ubidots.com";
+char payload[100];
+char pubTopic[150];
+char subTopic[150];
+char sub_payload[64];
+
+// Ubidots
+String device = "esp32";
+String servoVarLabel = "servo";
+String levelAirVarLabel =  "level-air";
+
+//Sensor HCSR04
+#include <NewPing.h>
+#define TRIGGER_PIN  13  // Arduino pin tied to trigger pin on the ultrasonic sensor.
+#define ECHO_PIN     12  // Arduino pin tied to echo pin on the ultrasonic sensor.
+#define MAX_DISTANCE 400 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+NewPing ultrasonic(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
+int distance;
+String distanceStr;
 
 //OTA
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <Update.h>
 WebServer server(80);
-const char* host = "rino-esp32"; // nama-esp32
+const char* host = "my-esp32"; // nama-esp32
+
+// Servo
+#include <Servo.h>              // diambil dari lib ServoESP32
+#define SERVO_PIN 27
+Servo servo;
+int servoPos, servoPosLocal;
 
 ///////////////////////////////////////////////////LAYOUT PAGE LOGIN OTA///////////////////////////////////////////////////////////////////
 /* Style */
@@ -86,28 +116,41 @@ String serverIndex =
 
 //////////////////////////////////////////////////////FINISHED LAYOUT PAGE LOGIN///////////////////////////////////////////////////////////
 
-//LED setup
-#define LED_PIN 2
-int ledState = HIGH;
+//read sensor and send data interval
+unsigned long lastCheck = 0;
 unsigned long lastMillis = 0;
-unsigned long ledInterval = 500;
+unsigned long intv;
+unsigned long Interval = 20000;
+unsigned long beginInterval = 0;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, ledState);
+  servo.attach(SERVO_PIN);
   wifiInit();
+  mqttInit();
   openOTA();
   lastMillis = millis();
+  intv = beginInterval;
 }
 
 void loop() {
   server.handleClient();
   delay(1);
-  if(millis()- lastMillis >= ledInterval)
+  if (!pubSubClient.connected()) {
+    reconnect();
+  }
+  pubSubClient.loop();
+  if (millis() - lastMillis >= intv)
   {
-    ledState = !ledState;
-    digitalWrite(LED_PIN, ledState);
+    intv = Interval;
     lastMillis = millis();
+    readDistance();
+    publishDataToUbidots();
+  }
+  if (millis() - lastCheck >= 1000)
+  {
+    lastCheck = millis();
+    pubSubClient.subscribe(subTopic);
+    changeServoPos();
   }
 }

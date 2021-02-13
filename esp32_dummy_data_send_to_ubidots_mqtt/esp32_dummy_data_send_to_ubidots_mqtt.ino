@@ -1,17 +1,34 @@
-// WIFI
+//WiFi
 #include <WiFi.h>
-#include <WiFiClient.h>
-int status = WL_IDLE_STATUS;     // the Wifi radio's status
-const char* ssid = "ssid";  // SSID Wifi / Hotspot
-const char* password = "986pswdr"; // Password Wifi / Hotspot
-WiFiClient client;
+int status = WL_IDLE_STATUS;
+const char* ssid     = "SSID";
+const char* password = "SSIDPASSWORD";
+String token = "XXXX-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+WiFiClient ubidots;
+
+String humidity, temperature;
+
+//MQTT
+#include <PubSubClient.h>
+PubSubClient pubSubClient(ubidots);
+#define MQTT_CLIENT_NAME "esp32-client"
+char mqttBroker[]  = "industrial.api.ubidots.com";
+char payload[256];
+char pubTopic[150];
+
+// Ubidots
+String DEVICE_LABEL = "esp32-device";
+String humidityVarLabel = "kelembaban";
+String temperatureVarLabel = "suhu";
+
 
 //OTA
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <Update.h>
 WebServer server(80);
-const char* host = "rino-esp32"; // nama-esp32
+const char* host = "my-esp32"; // nama-esp32
+
 
 ///////////////////////////////////////////////////LAYOUT PAGE LOGIN OTA///////////////////////////////////////////////////////////////////
 /* Style */
@@ -86,28 +103,34 @@ String serverIndex =
 
 //////////////////////////////////////////////////////FINISHED LAYOUT PAGE LOGIN///////////////////////////////////////////////////////////
 
-//LED setup
-#define LED_PIN 2
-int ledState = HIGH;
+//read sensor and send data interval
+unsigned long lastCheck = 0;
 unsigned long lastMillis = 0;
-unsigned long ledInterval = 500;
+unsigned long intv;
+unsigned long Interval = 20000;
+unsigned long beginInterval = 0;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, ledState);
   wifiInit();
+  mqttInit();
   openOTA();
   lastMillis = millis();
+  intv = beginInterval;
 }
 
 void loop() {
   server.handleClient();
   delay(1);
-  if(millis()- lastMillis >= ledInterval)
+  if (!pubSubClient.connected()) {
+    reconnect();
+  }
+  pubSubClient.loop();
+  if (millis() - lastMillis >= intv)
   {
-    ledState = !ledState;
-    digitalWrite(LED_PIN, ledState);
+    intv = Interval;
     lastMillis = millis();
+    getAirValue();
+    publishDataToUbidots();
   }
 }

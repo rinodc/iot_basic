@@ -1,9 +1,9 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-#define WIFISSID "ssid" // Put your WifiSSID here
-#define PASSWORD "986pswdr" // Put your wifi password here
-#define TOKEN "BBFF-0CppXmrX7ONUyRTgc9V8aEhJ4obdVG" // Put your Ubidots' TOKEN
+#define WIFISSID "SSID" // Put your WifiSSID here
+#define PASSWORD "SSIDPASSWORD" // Put your wifi password here
+#define TOKEN "XXXX-xxxxxxxxxxxxxxxxxxxxxxxxxxx" // Put your Ubidots' TOKEN
 #define MQTT_CLIENT_NAME "ESP32" // MQTT client Name, please enter your own 8-12 alphanumeric character ASCII string; 
 
 #define VARIABLE_LABEL "servo" // Assign the variable label

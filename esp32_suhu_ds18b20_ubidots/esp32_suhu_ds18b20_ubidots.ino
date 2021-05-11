@@ -17,7 +17,7 @@ const char* password = "SSIDPASSWORD";
 WiFiClient client;
 
 // Ubidots
-char iot_server[] = "http://things.ubidots.com";
+char iot_server[] = "http://things.iot.ubidots.com";
 const int port = 80;
 String token = "BBFF-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 String DEVICE_LABEL = "esp32";

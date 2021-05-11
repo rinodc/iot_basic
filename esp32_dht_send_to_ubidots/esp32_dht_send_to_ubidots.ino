@@ -19,7 +19,7 @@ const char* ssid     = "SSID";
 const char* password = "SSIDPASSWORD";
 
 int status = WL_IDLE_STATUS;
-char server[] = "http://things.ubidots.com";
+char server[] = "http://things.iot.ubidots.com";
 const int port = 80;
 String token = "XXXX-xxxxxxxxxxxxxxxxxxxxxxxxxxx";
 

@@ -13,12 +13,9 @@ PubSubClient pubSubClient(ubidots);
 char mqttBroker[]  = "industrial.api.ubidots.com";
 char payload[100];
 char pubTopic[150];
-char subTopic[150];
-char sub_payload[64];
 
 // Ubidots
 String device = "esp32";
-String servoVarLabel = "servo";
 String levelAirVarLabel =  "level-air";
 
 //Sensor HCSR04
@@ -37,11 +34,6 @@ String distanceStr;
 WebServer server(80);
 const char* host = "my-esp32"; // nama-esp32
 
-// Servo
-#include <Servo.h>
-#define SERVO_PIN 27
-Servo servo;
-int servoPos;
 
 ///////////////////////////////////////////////////LAYOUT PAGE LOGIN OTA///////////////////////////////////////////////////////////////////
 /* Style */
@@ -125,7 +117,6 @@ unsigned long beginInterval = 0;
 
 void setup() {
   Serial.begin(115200);
-  servo.attach(SERVO_PIN);
   wifiInit();
   mqttInit();
   openOTA();
@@ -146,11 +137,5 @@ void loop() {
     lastMillis = millis();
     readDistance();
     publishDataToUbidots();
-  }
-  if (millis() - lastCheck >= 1000)
-  {
-    lastCheck = millis();
-    pubSubClient.subscribe(subTopic);
-    changeServoPos();
   }
 }

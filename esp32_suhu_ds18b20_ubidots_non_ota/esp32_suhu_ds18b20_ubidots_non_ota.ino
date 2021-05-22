@@ -19,7 +19,7 @@ WiFiClient client;
 // Ubidots
 char iot_server[] = "http://things.iot.ubidots.com";
 const int port = 80;
-String token = "BBFF-yvYUKs34eSn1fYJ7dXtNbYm31ZjjT6";
+String token = "XXXX-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 String DEVICE_LABEL = "esp32";
 String temperatureVarLabel = "suhu";
 

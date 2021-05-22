@@ -90,7 +90,7 @@ String serverIndex =
 #define LED_PIN 2
 int ledState = HIGH;
 unsigned long lastMillis = 0;
-unsigned long ledInterval = 500;
+unsigned long ledInterval = 2000;
 
 void setup() {
   Serial.begin(115200);

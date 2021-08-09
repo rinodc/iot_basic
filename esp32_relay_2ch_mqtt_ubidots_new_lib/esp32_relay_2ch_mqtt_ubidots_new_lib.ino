@@ -1,8 +1,8 @@
 #include "UbidotsEsp32Mqtt.h"
 
-#define WIFISSID "internetku" // Put your WifiSSID here
-#define PASSWORD "39000755" // Put your wifi password here
-#define TOKEN "BBFF-0CppXmrX7ONUyRTgc9V8aEhJ4obdVG"
+#define WIFISSID "SSID" // Put your WifiSSID here
+#define PASSWORD "SSIDPASSWORD" // Put your wifi password here
+#define TOKEN "XXXX-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 #define RELAY1_VARIABLE_LABEL "relay1"    // Assing the variable label to subscribe
 #define RELAY2_VARIABLE_LABEL "relay2"   // Assing the variable label to subscribe

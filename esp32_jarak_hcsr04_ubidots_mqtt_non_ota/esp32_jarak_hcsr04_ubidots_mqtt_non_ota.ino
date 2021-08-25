@@ -3,7 +3,7 @@
 int status = WL_IDLE_STATUS;
 const char* ssid     = "SSID";
 const char* password = "SSIDPASSWORD";
-String token = "XXXX-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+String token = "XXXX-xxxxxxxxxxxxxxxxxxxxxxxxxxx";
 WiFiClient ubidots;
 
 //MQTT
@@ -31,7 +31,8 @@ String distanceStr;
 unsigned long lastCheck = 0;
 unsigned long lastMillis = 0;
 unsigned long intv;
-unsigned long Interval = 20000;
+//unsigned long Interval = 20000;
+unsigned long Interval = 5000;
 unsigned long beginInterval = 0;
 
 void setup() {

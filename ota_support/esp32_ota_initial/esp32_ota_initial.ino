@@ -2,8 +2,8 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
-const char* ssid = "SSID";  // SSID Wifi / Hotspot
-const char* password = "SSIDPASSWORD"; // Password Wifi / Hotspot
+const char* ssid = "internetku";  // SSID Wifi / Hotspot
+const char* password = "39000755"; // Password Wifi / Hotspot
 WiFiClient client;
 
 //OTA
@@ -90,7 +90,7 @@ String serverIndex =
 #define LED_PIN 2
 int ledState = HIGH;
 unsigned long lastMillis = 0;
-unsigned long ledInterval = 2000;
+unsigned long ledInterval = 1000;
 
 void setup() {
   Serial.begin(115200);

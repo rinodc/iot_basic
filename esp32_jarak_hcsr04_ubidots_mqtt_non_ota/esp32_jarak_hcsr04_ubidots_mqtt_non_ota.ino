@@ -1,22 +1,13 @@
 //WiFi
-#include <WiFi.h>
-int status = WL_IDLE_STATUS;
 const char* ssid     = "SSID";
 const char* password = "SSIDPASSWORD";
-String token = "XXXX-xxxxxxxxxxxxxxxxxxxxxxxxxxx";
-WiFiClient ubidots;
-
-//MQTT
-#include <PubSubClient.h>
-PubSubClient pubSubClient(ubidots);
-#define MQTT_CLIENT_NAME "esp32-client"
-char mqttBroker[]  = "industrial.api.ubidots.com";
-char payload[100];
-char pubTopic[150];
+const char* token = "XXXX-xxxxxxxxxxxxxxxxxxxxxxxx";
 
 // Ubidots
-String device = "esp32";
-String levelAirVarLabel =  "level-air";
+#include "UbidotsEsp32Mqtt.h"
+const char* device = "esp32";
+const char* levelAirVarLabel =  "level-air";
+Ubidots ubidots(token);
 
 //Sensor HCSR04
 #include <NewPing.h>
@@ -28,32 +19,28 @@ int distance;
 String distanceStr;
 
 //read sensor and send data interval
-unsigned long lastCheck = 0;
-unsigned long lastMillis = 0;
-unsigned long intv;
-//unsigned long Interval = 20000;
-unsigned long Interval = 5000;
-unsigned long beginInterval = 0;
+unsigned long timer;
+const int PUBLISH_FREQUENCY = 10000;
 
 void setup() {
   Serial.begin(115200);
+  ubidots.setDebug(true);
   wifiInit();
   mqttInit();
-  lastMillis = millis();
-  intv = beginInterval;
+  timer = 10000;
 }
 
 void loop() {
-  delay(1);
-  if (!pubSubClient.connected()) {
-    reconnect();
-  }
-  pubSubClient.loop();
-  if (millis() - lastMillis >= intv)
+  if (!ubidots.connected())
   {
-    intv = Interval;
-    lastMillis = millis();
-    readDistance();
-    publishDataToUbidots();
+    ubidots.reconnect();
   }
+  if (abs(millis() - timer) > PUBLISH_FREQUENCY) // triggers the routine every 5 seconds
+  {
+    readDistance();
+    ubidots.add(levelAirVarLabel, distance); // Insert your variable Labels and the value to be sent
+    ubidots.publish(device);
+    timer = millis();
+  }
+  ubidots.loop();
 }

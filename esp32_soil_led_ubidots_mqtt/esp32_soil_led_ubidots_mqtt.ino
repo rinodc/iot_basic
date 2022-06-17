@@ -1,6 +1,6 @@
 // Ubidots
 #include "UbidotsEsp32Mqtt.h"
-const char *UBIDOTS_TOKEN = "BBFF-zivXkthfyuAWkZ7uIfvlkpyXtfbYu5";  // Put here your Ubidots TOKEN
+const char *UBIDOTS_TOKEN = "XXXX-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";  // Put here your Ubidots TOKEN
 const char *WIFI_SSID = "SSID";      // Put here your Wi-Fi SSID
 const char *WIFI_PASS = "SSIDPASSWORD";      // Put here your Wi-Fi password
 const char *DEVICE_LABEL = "esp32";   // Put here your Device label to which data  will be published

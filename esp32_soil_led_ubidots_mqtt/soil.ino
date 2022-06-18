@@ -1,7 +1,8 @@
 void soil_read()
 {
-  int analog_value = analogRead(SOIL);
-  soil_value = map(analog_value,0,4095,100,0);
+  analog_value = analogRead(SOIL);
+  soil_value = map(analog_value,1772,4095,100,0);
+  soil_value = constrain(soil_value, 0, 100);
   if(soil_value <= WET)
   {
     turn_on_led();

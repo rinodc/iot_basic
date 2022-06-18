@@ -5,13 +5,14 @@ const char *WIFI_SSID = "SSID";      // Put here your Wi-Fi SSID
 const char *WIFI_PASS = "SSIDPASSWORD";      // Put here your Wi-Fi password
 const char *DEVICE_LABEL = "esp32";   // Put here your Device label to which data  will be published
 const char *VARIABLE_LABEL = "soil"; // Put here your Variable label to which data  will be published
-const int PUBLISH_FREQUENCY = 10000; // Update rate in milliseconds
+const int PUBLISH_FREQUENCY = 5000; // Update rate in milliseconds
 unsigned long timer;
 Ubidots ubidots(UBIDOTS_TOKEN);
 
 // soil
 #define SOIL 34
 #define WET 50
+int analog_value = 0;
 int soil_value = 0;
 
 // LED
@@ -50,6 +51,7 @@ void loop()
   }
   if (abs(millis() - timer) > PUBLISH_FREQUENCY) // triggers the routine every 5 seconds
   {
+    Serial.println("analog value = " + String(analog_value) + "\t soil moisture value = " + String(soil_value) + " %");
     send_data();
     timer = millis();
   }
